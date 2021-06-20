@@ -11,3 +11,5 @@ nuget.exe
 /config.wyam.hash
 /config.wyam.dll
 .vscode
+.idea
+*.log

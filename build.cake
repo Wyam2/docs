@@ -1,13 +1,13 @@
 // The following environment variables need to be set for Publish target:
 // WYAM_GITHUB_TOKEN
 
-#tool "nuget:https://api.nuget.org/v3/index.json?package=Wyam&version=2.2.3"
-#addin "nuget:https://api.nuget.org/v3/index.json?package=Cake.Wyam&version=2.2.3"
+#tool "nuget:https://api.nuget.org/v3/index.json?package=Wyam&version=2.2.9"
+#addin "nuget:https://api.nuget.org/v3/index.json?package=Cake.Wyam&version=2.2.12"
 #addin "nuget:https://api.nuget.org/v3/index.json?package=Octokit"
-#addin "NetlifySharp"
+//#addin "NetlifySharp"
 
 using Octokit;
-using NetlifySharp;
+//using NetlifySharp;
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -49,14 +49,13 @@ Task("GetSource")
         {
             Credentials = new Credentials(githubToken)
         };
-	    // The GitHub releases API returns Not Found if all are pre-release, so need workaround below
-        //Release release = github.Repository.Release.GetLatest("Wyamio", "Wyam").Result;        
-	    Release release = github.Repository.Release.GetAll("Wyamio", "Wyam").Result.First();
-	    FilePath releaseZip = DownloadFile(release.ZipballUrl);
+	    // The GitHub releases API returns Not Found for Wyam2. Better use tags
+        var tag = github.Repository.GetAllTags("Wyam2", "wyam").Result.First();
+	    FilePath releaseZip = DownloadFile(tag.ZipballUrl);
         Unzip(releaseZip, releaseDir);
         
         // Need to rename the container directory in the zip file to something consistent
-        var containerDir = GetDirectories(releaseDir.Path.FullPath + "/*").First(x => x.GetDirectoryName().StartsWith("Wyamio"));
+        var containerDir = GetDirectories(releaseDir.Path.FullPath + "/*").First(x => x.GetDirectoryName().StartsWith("Wyam2"));
         MoveDirectory(containerDir, sourceDir);
         Information($"Downloaded and unzipped { GetFiles(sourceDir.Path.FullPath + "/**/*").Count } files in { GetSubDirectories(sourceDir).Count } directories");
     });
@@ -163,6 +162,7 @@ Task("Debug")
 Task("Deploy")
     .Does(() =>
     {
+        /*
         var netlifyToken = EnvironmentVariable("NETLIFY_TOKEN");
         if(string.IsNullOrEmpty(netlifyToken))
         {
@@ -172,6 +172,7 @@ Task("Deploy")
         Information("Deploying output to Netlify");
         var client = new NetlifyClient(netlifyToken);
         client.UpdateSite($"wyam.netlify.com", MakeAbsolute(Directory("./output")).FullPath).SendAsync().Wait();
+        */
     });
 
 //////////////////////////////////////////////////////////////////////

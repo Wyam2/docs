@@ -1,12 +1,12 @@
-Settings[Keys.Host] = "wyam.io";
+Settings[Keys.Host] = "wyam2.github.io";
 Settings[Keys.LinksUseHttps] = true;
-Settings[DocsKeys.Title] = "Wyam";
+Settings[DocsKeys.Title] = "Wyam2";
 Settings[DocsKeys.Logo] = "/assets/img/logo.png";
 Settings[DocsKeys.SourceFiles] = null;
 Settings[DocsKeys.ProjectFiles] = "../release/repo/src/{!clients,*}/**/*.csproj";
 //Settings[DocsKeys.ProjectFiles] = "../../Wyam/src/{!clients,*}/**/*.csproj";
-Settings[DocsKeys.BaseEditUrl] = "https://github.com/Wyamio/Wyam.Web/tree/master/input/";
-Settings[DocsKeys.NetlifyRedirects] = true;
+Settings[DocsKeys.BaseEditUrl] = "https://github.com/Wyam2/docs/tree/master/input/";
+Settings[DocsKeys.NetlifyRedirects] = false;
 Settings[DocsKeys.ImplicitInheritDoc] = true;
 
 public class KeysModel

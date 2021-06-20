@@ -46,12 +46,12 @@ Task("GetSource")
         };
 	    // The GitHub releases API returns Not Found if all are pre-release, so need workaround below
         //Release release = github.Repository.Release.GetLatest("Wyamio", "Wyam").Result;        
-	    Release release = github.Repository.Release.GetAll("Wyamio", "Wyam").Result.First();
+	    Release release = github.Repository.Release.GetAll("Wyam2", "Wyam").Result.First();
 	    FilePath releaseZip = DownloadFile(release.ZipballUrl);
         Unzip(releaseZip, releaseDir);
         
         // Need to rename the container directory in the zip file to something consistent
-        var containerDir = GetDirectories(releaseDir.Path.FullPath + "/*").First(x => x.GetDirectoryName().StartsWith("Wyamio"));
+        var containerDir = GetDirectories(releaseDir.Path.FullPath + "/*").First(x => x.GetDirectoryName().StartsWith("Wyam2"));
         MoveDirectory(containerDir, sourceDir);
     });
 

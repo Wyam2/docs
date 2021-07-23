@@ -5,7 +5,7 @@ Settings[DocsKeys.Logo] = "/assets/img/logo.png";
 Settings[DocsKeys.SourceFiles] = null;
 Settings[DocsKeys.ProjectFiles] = "../release/repo/src/{!clients,*}/**/*.csproj";
 //Settings[DocsKeys.ProjectFiles] = "../../Wyam/src/{!clients,*}/**/*.csproj";
-Settings[DocsKeys.BaseEditUrl] = "https://github.com/Wyam2/docs/tree/master/input/";
+Settings[DocsKeys.BaseEditUrl] = "https://github.com/Wyam2/docs/tree/main/input/";
 Settings[DocsKeys.NetlifyRedirects] = false;
 Settings[DocsKeys.ImplicitInheritDoc] = true;
 
@@ -35,7 +35,7 @@ Pipelines.InsertBefore(Docs.RenderPages, "Modules",
             .WithAssemblies(ctx.List<string>(DocsKeys.AssemblyFiles))
             .WithProjects(ctx.List<string>(DocsKeys.ProjectFiles))
             .WithNamedTypes(x => x.AllInterfaces.Any(y => y.Name == "IModule") && !x.IsAbstract)
-            .WhereNamespaces(x => !x.StartsWith("Wyam.Testing"))
+            .WhereNamespaces(x => !x.StartsWith("Wyam2.Testing"))
             .WherePublic()
             .WithDocsForImplicitSymbols()
             .WithWritePath(x => {
@@ -111,7 +111,7 @@ Pipelines.InsertBefore(Docs.RenderPages, "Shortcodes",
             .WithAssemblies(ctx.List<string>(DocsKeys.AssemblyFiles))
             .WithProjects(ctx.List<string>(DocsKeys.ProjectFiles))
             .WithNamedTypes(x => x.AllInterfaces.Any(y => y.Name == "IShortcode") && !x.IsAbstract)
-            .WhereNamespaces(x => !x.StartsWith("Wyam.Testing"))
+            .WhereNamespaces(x => !x.StartsWith("Wyam2.Testing"))
             .WherePublic()
             .WithDocsForImplicitSymbols()
             .WithWritePath(x => {

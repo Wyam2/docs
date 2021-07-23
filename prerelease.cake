@@ -84,13 +84,13 @@ Task("Generate-Themes")
                 ArgumentCustomization = args => args.Prepend("new"),
                 NuGetPackages = new []
                 {
-                    "Wyam." + recipe.GetDirectoryName(),
-                    "Wyam.Markdown",
-                    "Wyam.Razor",
-                    "Wyam.Yaml",
-                    "Wyam.CodeAnalysis",
-                    "Wyam.Less",
-                    "Wyam.Html"
+                    "Wyam2." + recipe.GetDirectoryName(),
+                    "Wyam2.Markdown",
+                    "Wyam2.Razor",
+                    "Wyam2.Yaml",
+                    "Wyam2.CodeAnalysis",
+                    "Wyam2.Less",
+                    "Wyam2.Html"
                 }.Select(x => new NuGetSettings
                 {
                     Prerelease = true,
@@ -123,14 +123,14 @@ Task("Generate-Themes")
                         },
                         NuGetPackages = new []
                         {
-                            "Wyam." + recipe.GetDirectoryName(),
-                            "Wyam." + recipe.GetDirectoryName() + "." + theme.GetFilenameWithoutExtension().FullPath,
-                            "Wyam.Markdown",
-                            "Wyam.Razor",
-                            "Wyam.Yaml",
-                            "Wyam.CodeAnalysis",
-                            "Wyam.Less",
-                            "Wyam.Html"
+                            "Wyam2." + recipe.GetDirectoryName(),
+                            "Wyam2." + recipe.GetDirectoryName() + "." + theme.GetFilenameWithoutExtension().FullPath,
+                            "Wyam2.Markdown",
+                            "Wyam2.Razor",
+                            "Wyam2.Yaml",
+                            "Wyam2.CodeAnalysis",
+                            "Wyam2.Less",
+                            "Wyam2.Html"
                         }.Select(x => new NuGetSettings
                         {
                             Prerelease = true,
@@ -162,14 +162,14 @@ Task("Preview")
             Theme = "Samson -i",
             NuGetPackages = new []
             {
-                "Wyam.Docs",
-                "Wyam.Docs.Samson",
-                "Wyam.Markdown",
-                "Wyam.Razor",
-                "Wyam.Yaml",
-                "Wyam.CodeAnalysis",
-                "Wyam.Less",
-                "Wyam.Html"
+                "Wyam2.Docs",
+                "Wyam2.Docs.Samson",
+                "Wyam2.Markdown",
+                "Wyam2.Razor",
+                "Wyam2.Yaml",
+                "Wyam2.CodeAnalysis",
+                "Wyam2.Less",
+                "Wyam2.Html"
             }.Select(x => new NuGetSettings
             {
                 Prerelease = true,

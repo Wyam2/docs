@@ -142,6 +142,74 @@ usage:  build [-v] [--attach] [-w] [-p [arg]] [--force-ext]
     <package>                The package to install.                              
 ```
 
+You can scaffold a new wyam project, using `new`:
+```
+>wyam new -r Blog -help
+
+usage:  new [-v] [--attach] [-u] [--use-local-packages]
+        [--use-global-sources] [--ignore-default-sources]
+        [--packages-path <arg>] [-i <arg>] [-c <arg>] [--ns <arg>...]
+        [-n <arg>...] [-r <arg>] [-a <arg>...] [--] <root>
+
+    -v, --verbose                    Turns on verbose output showing
+                                     additional trace message useful for
+                                     debugging.
+    --attach                         Pause execution at the start of the
+                                     program until a debugger is
+                                     attached.
+    -u, --update-packages            Check the NuGet server for more
+                                     recent versions of each package and
+                                     update them if applicable.
+    --use-local-packages             Toggles the use of a local NuGet
+                                     packages folder.
+    --use-global-sources             Toggles the use of the global NuGet
+                                     sources (default is false).
+    --ignore-default-sources         Ignores default NuGet sources like
+                                     the NuGet Gallery (default is
+                                     false).
+    --packages-path <arg>            The packages path to use (only if
+                                     use-local is true).
+    -i, --input <arg>                The path of input files, can be
+                                     absolute or relative to the current
+                                     folder.
+    -c, --config <arg>               Configuration file (by default,
+                                     config.wyam is used).
+    --ns, --nuget-source <arg>...    Specifies an additional package
+                                     source to use.
+    -n, --nuget <arg>...             Adds a NuGet package (downloading
+                                     and installing it if needed). See
+                                     below for syntax details.
+    -r, --recipe <arg>               Specifies a recipe to use. See
+                                     below for syntax details.
+    -a, --assembly <arg>...          Adds an assembly reference by name,
+                                     file name, or globbing pattern.
+    <root>                           The folder (or config file) to use.
+
+--nuget usage:
+
+    -p, --prerelease         Specifies that prerelease packages are
+                             allowed.
+    -u, --unlisted           Specifies that unlisted packages are
+                             allowed.
+    -v, --version <arg>      Specifies the version range of the package
+                             to use.
+    -l, --latest             Specifies that the latest available version
+                             of the package should be used (this will
+                             always trigger a request to the sources).
+    -s, --source <arg>...    Specifies the package source(s) to get the
+                             package from.
+    -e, --exclusive          Indicates that only the specified package
+                             source(s) should be used to find the
+                             package.
+    <package>                The package to install.
+
+--recipe usage:
+
+    -i, --ignore-known-packages    Ignores (does not add) packages for
+                                   known recipes.
+    <recipe>                       The recipe to use.
+```
+
 # Nested Arguments
 
 Note that some of the arguments such as `--nuget` are "nested" and must be contained in quotes if they contain options of their own (and any inner quotes must be escaped). For example, the following command will load a Nuget package named `Foo.Bar`:

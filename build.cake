@@ -1,178 +1,154 @@
 // The following environment variables need to be set for Publish target:
 // WYAM_GITHUB_TOKEN
 
-#tool "nuget:https://api.nuget.org/v3/index.json?package=Wyam&version=2.2.9"
-#addin "nuget:https://api.nuget.org/v3/index.json?package=Cake.Wyam&version=2.2.12"
-#addin "nuget:https://api.nuget.org/v3/index.json?package=Octokit"
-//#addin "NetlifySharp"
+#addin "nuget:https://api.nuget.org/v3/index.json?package=Octokit&version=0.50.0"
+#addin "nuget:https://api.nuget.org/v3/index.json?package=LibGit2Sharp&version=0.27.0-preview-0116&prerelease"
+#addin "nuget:https://api.nuget.org/v3/index.json?package=Cake.Kudu&version=1.0.1"
+
+#tool "nuget:https://api.nuget.org/v3/index.json?package=KuduSync.NET&version=1.5.3"
 
 using Octokit;
-//using NetlifySharp;
+using LibGit2Sharp;
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 //////////////////////////////////////////////////////////////////////
 
 var target = Argument("target", "Default");
+var configuration = Argument("configuration", "Release");
+
+bool buildWyam = Argument<bool>("buildWyam", true);
+var localWyam = Argument<string>("localWyam", string.Empty);
+var localWyamSite = Argument<string>("localWyamSite", string.Empty);
+
+string gitTag = EnvironmentVariable("GITHUB_TAG") ?? Argument<string>("tag", string.Empty);
+string gitRef = EnvironmentVariable("GITHUB_REF") ?? Argument<string>("ref", string.Empty);
+string gitSha = EnvironmentVariable("GITHUB_SHA") ?? Argument<string>("sha", string.Empty);
 
 //////////////////////////////////////////////////////////////////////
 // PREPARATION
 //////////////////////////////////////////////////////////////////////
+bool useLocalWyam = !string.IsNullOrEmpty(localWyam) && DirectoryExists(localWyam);
+bool useLocalSite = !string.IsNullOrEmpty(localWyamSite);
 
 // Define directories.
 var releaseDir = Directory("./release");
-var sourceDir = releaseDir + Directory("repo");
+var sourceDir = useLocalWyam ? Directory(localWyam) : releaseDir + Directory("repo");
+var destDir = useLocalSite ? Directory(localWyamSite) : releaseDir + Directory("site");
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
 //////////////////////////////////////////////////////////////////////
 
-Task("CleanSource")
-    .Does(() =>
-{
-    if(DirectoryExists(sourceDir))
-    {
-        DeleteDirectory(sourceDir, new DeleteDirectorySettings
-        {
-            Force = true,
-            Recursive = true
-        });
-    }    
-});
-
-Task("GetSource")
-    .IsDependentOn("CleanSource")
+Task("Clean-Source")
+    .WithCriteria(() => !useLocalWyam)
     .Does(() =>
     {
-        var githubToken = EnvironmentVariable("WYAM_GITHUB_TOKEN");
-        GitHubClient github = new GitHubClient(new ProductHeaderValue("WyamDocs"))
+        if(DirectoryExists(sourceDir))
         {
-            Credentials = new Credentials(githubToken)
-        };
-	    // The GitHub releases API returns Not Found for Wyam2. Better use tags
-        var tag = github.Repository.GetAllTags("Wyam2", "wyam").Result.First();
-	    FilePath releaseZip = DownloadFile(tag.ZipballUrl);
-        Unzip(releaseZip, releaseDir);
-        
-        // Need to rename the container directory in the zip file to something consistent
-        var containerDir = GetDirectories(releaseDir.Path.FullPath + "/*").First(x => x.GetDirectoryName().StartsWith("Wyam2"));
-        MoveDirectory(containerDir, sourceDir);
-        Information($"Downloaded and unzipped { GetFiles(sourceDir.Path.FullPath + "/**/*").Count } files in { GetSubDirectories(sourceDir).Count } directories");
-    });
-    
-Task("Generate-Themes")
-    .Does(() =>
-    {
-        // Clean the output directory
-        var output = Directory("./output");
-        if(DirectoryExists(output))
-        {
-            CleanDirectory(output);
-        }
-
-        // Clean/create the scaffold directory
-        var scaffold = Directory("./scaffold");
-        if(!DirectoryExists(scaffold))
-        {
-            CreateDirectory(scaffold);
-        }
-
-        // Iterate the recipes
-        foreach(DirectoryPath recipe in GetDirectories("./input/recipes/*"))
-        {
-            // Scaffold the recipe into a temporary directory
-            CleanDirectory(scaffold);
-            Wyam(new WyamSettings
+            DeleteDirectory(sourceDir, new DeleteDirectorySettings
             {
-                Recipe = recipe.GetDirectoryName(),
-                RootPath = scaffold,
-                ArgumentCustomization = args => args.Prepend("new") 
+                Force = true,
+                Recursive = true
             });
+        }    
+    });
 
-            // Iterate the themes
-            foreach(FilePath theme in GetFiles(recipe.FullPath + "/themes/*.md"))
+Task("Get-Source")
+    .IsDependentOn("Clean-Source")
+    .WithCriteria(() => !useLocalWyam)
+    .Does(() =>
+    {
+        LibGit2Sharp.Repository.Init(sourceDir);
+        using (var repository = new LibGit2Sharp.Repository(sourceDir))
+        {
+            string logMessage = string.Empty;
+
+            repository.Config.Set("protocol.version", "2");
+            repository.Network.Remotes.Add("origin", "https://github.com/Wyam2/wyam.git");
+
+            var remote = repository.Network.Remotes["origin"];
+            var refSpecs = remote.FetchRefSpecs;
+            repository.Network.Fetch("origin",
+                                    refSpecs.Select(x => x.Specification),
+                                    new FetchOptions { Prune = true },
+                                    logMessage);
+            Information(logMessage);    
+            Commands.Checkout(repository,
+                                string.IsNullOrEmpty(gitRef) ? "refs/remotes/origin/main" : gitRef,
+                                new CheckoutOptions { CheckoutModifiers = CheckoutModifiers.Force });
+        }
+    });
+
+Task("Build-Source")
+    .IsDependentOn("Get-Source")
+    .WithCriteria(() => useLocalWyam)
+    .WithCriteria(() => buildWyam)
+    .Does((ctx) => {
+        var procSettings = new ProcessSettings{ 
+            Arguments = ProcessArgumentBuilder.FromString($@"./build.ps1 -Target Package -ScriptArgs ('--tag={gitTag}')"),
+            WorkingDirectory = sourceDir,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
+        };
+
+        using(var process = StartAndReturnProcess("pwsh", procSettings))
+        {
+            process.WaitForExit();
+            int exitCode = process.GetExitCode();
+            if(exitCode != 0)
             {
-                // See if this is a built-in theme by checking for "Preview" metadata
-                if(!Context.FileSystem
-                    .GetFile(theme)
-                    .ReadLines(Encoding.UTF8)
-                    .TakeWhile(x => !x.StartsWith("---"))
-                    .Any(x => x.StartsWith("Preview:")))
-                {
-                    // Build the theme preview
-                    string linkRoot = "/recipes/" + recipe.GetDirectoryName() + "/themes/preview/" + theme.GetFilenameWithoutExtension().FullPath;
-                    Wyam(new WyamSettings
-                    {
-                        Recipe = recipe.GetDirectoryName(),
-                        RootPath = scaffold,
-                        Theme = theme.GetFilenameWithoutExtension().FullPath,
-                        OutputPath = MakeAbsolute(Directory("./output" + linkRoot)).FullPath,
-                        Settings = new Dictionary<string, object>
-                        {
-                            { "LinkRoot", linkRoot }
-                        }
-                    });
-                }
+                throw new CakeException($"Wyam2 build: pwsh {procSettings.Arguments.RenderSafe()} returned ({exitCode}) because {process.GetStandardError()}");
             }
         }
-        CleanDirectory(scaffold);
-        DeleteDirectory(scaffold, new DeleteDirectorySettings
-        {
-            Force = true,
-            Recursive = true
-        });
+        Information("Wyam2 was succesfully build");
     });
 
-Task("Build")
-    .IsDependentOn("GetSource")
-    .IsDependentOn("Generate-Themes")
-    .Does(() =>
-    {
-        Wyam(new WyamSettings
-        {
-            NoClean = true,  // Cleaned in Generate-Themes task
-            Recipe = "Docs",
-            Theme = "Samson",
-            UpdatePackages = true
-        });        
+Task("Load-WyamAddin")
+    .Does(ctx =>{
+        var filename = (new FilePath(".local.cake")).FullPath;
+        string[] lines = new string[2]{
+            $"#addin nuget:file://{sourceDir}/build/nuget/?package=Cake.Wyam2",
+            $"#tool nuget:file://{sourceDir}/build/nuget/?package=Wyam2"
+        };
+
+        System.IO.File.WriteAllLines(filename, lines);        
     });
-    
-Task("Preview")
-    .IsDependentOn("Generate-Themes")
-    .Does(() =>
-    {
-        Wyam(new WyamSettings
+
+Task("Build-Docs")
+    .IsDependentOn("Load-WyamAddin")
+    .Does((ctx) => {
+        var procSettings = new ProcessSettings{ 
+            Arguments = ProcessArgumentBuilder.FromString($@"./build.ps1 -ToolsProj "".\tools\docs.csproj"" -Script docs.cake -Target Generate-Docs -ScriptArgs ('--tag={gitTag} --wyam-path=""{sourceDir}/build/nuget""')"),
+            WorkingDirectory = sourceDir,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
+        };
+
+        using(var process = StartAndReturnProcess("pwsh", procSettings))
         {
-            NoClean = true,  // Cleaned in Generate-Themes task
-            Recipe = "Docs",
-            Theme = "Samson",
-            UpdatePackages = true,
-            Preview = true            
-        });
+            process.WaitForExit();
+            int exitCode = process.GetExitCode();
+            if(exitCode != 0)
+            {
+                throw new CakeException($"Wyam2 build: pwsh {procSettings.Arguments.RenderSafe()} returned ({exitCode}) because {process.GetStandardError()}");
+            }
+        }
+        Information("Wyam2 was succesfully build");
     });
 
 Task("Debug")
+    .IsDependentOn("Build-Source")
     .Does(() =>
     {
-        DotNetCoreBuild("../Wyam/tests/integration/Wyam.Examples.Tests/Wyam.Examples.Tests.csproj");        
-        DotNetCoreExecute("../Wyam/tests/integration/Wyam.Examples.Tests/bin/Debug/netcoreapp2.1/Wyam.dll",
-            "-a \"../Wyam/tests/integration/Wyam.Examples.Tests/bin/Debug/netcoreapp2.1/**/*.dll\" -r \"docs -i\" -t \"../Wyam/themes/Docs/Samson\" -p");
+        DotNetCoreExecute($"{sourceDir}/tests/integration/Wyam.Examples.Tests/bin/Debug/netcoreapp2.1/Wyam.dll",
+            $"-a \"{sourceDir}/tests/integration/Wyam.Examples.Tests/bin/Debug/netcoreapp2.1/**/*.dll\" -r \"docs -i\" -t \"{sourceDir}/themes/Docs/Samson\" -p");
     });
 
 Task("Deploy")
     .Does(() =>
     {
-        /*
-        var netlifyToken = EnvironmentVariable("NETLIFY_TOKEN");
-        if(string.IsNullOrEmpty(netlifyToken))
-        {
-            throw new Exception("Could not get Netlify token environment variable");
-        }
-
-        Information("Deploying output to Netlify");
-        var client = new NetlifyClient(netlifyToken);
-        client.UpdateSite($"wyam.netlify.com", MakeAbsolute(Directory("./output")).FullPath).SendAsync().Wait();
-        */
+        
     });
 
 //////////////////////////////////////////////////////////////////////
@@ -180,10 +156,15 @@ Task("Deploy")
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("Build");
+    .IsDependentOn("Build-Source")
+    .IsDependentOn("Build-Docs")
+    .Does(() =>{
+        Information("Default");
+    });
     
 Task("BuildServer")
-    .IsDependentOn("Build")
+    .IsDependentOn("Build-Source")
+    .IsDependentOn("Build-Docs")
     .IsDependentOn("Deploy");
 
 //////////////////////////////////////////////////////////////////////

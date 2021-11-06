@@ -1,16 +1,16 @@
 Title: Phantom
 Description: A sparse theme with lots of whitespace.
 NuGet: Wyam.Blog.Phantom
-Source: https://github.com/Wyamio/Wyam/tree/develop/themes/Blog/Phantom
-# Author: Wyam
-# AuthorLink: http://wyam.io
-# Link: http://www.github.com/wyamio/wyam
+Source: https://github.com/Wyam2/wyam/tree/develop/themes/Blog/Phantom
+# Author: Wyam2
+# AuthorLink: http://wyam2.github.io
+# Link: http://www.github.com/Wyam2/wyam
 ---
 This theme is a port of the [Phantom](https://html5up.net/phantom) theme from [HTML5 UP](https://html5up.net).
 
 # Overriding Theme Files
 
-One way to customize the output of the recipe is to [override specific theme files](/docs/concepts/themes#overriding-theme-files) with your own versions. Some theme files are even designed specifically for this purpose. While any theme file can be overridden, these are some of the more useful ones you should focus on. To implement an override, create a new file with the same name in your own input path. In many cases you'll also want to start with the original content of the theme file ([as available in the repository](https://github.com/Wyamio/Wyam/tree/master/themes)) and edit it from there.
+One way to customize the output of the recipe is to [override specific theme files](/docs/concepts/themes#overriding-theme-files) with your own versions. Some theme files are even designed specifically for this purpose. While any theme file can be overridden, these are some of the more useful ones you should focus on. To implement an override, create a new file with the same name in your own input path. In many cases you'll also want to start with the original content of the theme file ([as available in the repository](https://github.com/Wyam2/wyam/tree/master/themes)) and edit it from there.
 
 - **`/assets/css/override.css`**
   

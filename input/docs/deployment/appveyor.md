@@ -30,19 +30,19 @@ install:
   - git submodule update --init --recursive
   - mkdir ..\Wyam
   - mkdir ..\output
-  # Fetch the latest version of Wyam 
-  - "curl -s https://raw.githubusercontent.com/Wyamio/Wyam/master/RELEASE -o ..\\Wyam\\wyamversion.txt"
+  # Fetch the latest version of Wyam2 
+  - "curl -s https://raw.githubusercontent.com/Wyam2/Wyam/master/RELEASE -o ..\\Wyam\\wyamversion.txt"
   - set /P WYAMVERSION=< ..\Wyam\wyamversion.txt
   - echo %WYAMVERSION%
   # Get and unzip the latest version of Wyam
-  - ps: Start-FileDownload "https://github.com/Wyamio/Wyam/releases/download/$env:WYAMVERSION/Wyam-$env:WYAMVERSION.zip" -FileName "..\Wyam\Wyam.zip"
-  - 7z x ..\Wyam\Wyam.zip -o..\Wyam -r
+  - ps: Start-FileDownload "https://github.com/Wyam2/Wyam/releases/download/$env:WYAMVERSION/Wyam2-$env:WYAMVERSION.zip" -FileName "..\Wyam\Wyam2.zip"
+  - 7z x ..\Wyam\Wyam2.zip -o..\Wyam -r
 
 build_script:
   - dotnet ..\Wyam\Wyam.dll --output ..\output
 
 on_success:
-  # Switch branches to gh-pages, clean the folder, copy everything in from the Wyam output, and commit/push
+  # Switch branches to gh-pages, clean the folder, copy everything in from the Wyam2 output, and commit/push
   # See http://www.appveyor.com/docs/how-to/git-push for more info
   - git config --global credential.helper store
   # EDIT your Git email and name
@@ -53,9 +53,9 @@ on_success:
   - git rm -rf .
   - xcopy ..\output . /E
   # EDIT your domain name or remove if not using a custom domain
-  - echo wyam.io > CNAME
+  - echo wyam2.github.io > CNAME
   # EDIT the origin of your repository - have to reset it here because AppVeyor pulls from SSH, but GitHub won't accept SSH pushes
-  - git remote set-url origin https://github.com/Wyamio/Wyam.Web.git
+  - git remote set-url origin https://github.com/Wyam2/docs.git
   - git add -A
   - git commit -a -m "Commit from AppVeyor"
   - git push

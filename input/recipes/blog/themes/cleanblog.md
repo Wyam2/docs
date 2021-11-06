@@ -1,18 +1,18 @@
 Title: CleanBlog
 Description: A clean theme with a large top banner area.
 NuGet: Wyam.Blog.CleanBlog
-Source: https://github.com/Wyamio/Wyam/tree/develop/themes/Blog/CleanBlog
-# Author: Wyam
-# AuthorLink: http://wyam.io
+Source: https://github.com/Wyam2/wyam/tree/develop/themes/Blog/CleanBlog
+# Author: Wyam2
+# AuthorLink: http://wyam2.github.io
 # Link: http://www.github.com/asdf
 # Preview: http://some.other.preview/ OR false for no preview
-# Git: https://github.com/Wyamio/Wyam.git
+# Git: https://github.com/Wyam2/wyam.git
 ---
 This theme is a port of the [Clean Blog](https://startbootstrap.com/template-overviews/clean-blog/) theme from [Start Bootstrap](https://startbootstrap.com/). It contains responsive pages with lots of whitespace and a large top banner area.
 
 # Overriding Theme Files
 
-One way to customize the output of the recipe is to [override specific theme files](/docs/concepts/themes#overriding-theme-files) with your own versions. Some theme files are even designed specifically for this purpose. While any theme file can be overridden, these are some of the more useful ones you should focus on. To implement an override, create a new file with the same name in your own input path. In many cases you'll also want to start with the original content of the theme file ([as available in the repository](https://github.com/Wyamio/Wyam/tree/master/themes)) and edit it from there.
+One way to customize the output of the recipe is to [override specific theme files](/docs/concepts/themes#overriding-theme-files) with your own versions. Some theme files are even designed specifically for this purpose. While any theme file can be overridden, these are some of the more useful ones you should focus on. To implement an override, create a new file with the same name in your own input path. In many cases you'll also want to start with the original content of the theme file ([as available in the repository](https://github.com/Wyam2/wyam/tree/master/themes)) and edit it from there.
 
 - **`/assets/css/override.css`**
   

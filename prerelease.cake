@@ -1,5 +1,5 @@
-#tool "nuget:https://www.myget.org/F/wyam?package=Wyam&prerelease&version=2.1.1-build-20181217-3"
-#addin "nuget:https://www.myget.org/F/wyam?package=Cake.Wyam&prerelease&version=2.1.1-build-20181217-3"
+#tool "nuget:https://api.nuget.org/v3/index.json?package=Wyam2&version=3.0.0-rc2&prerelease"
+#addin "nuget:https://api.nuget.org/v3/index.json?package=Cake.Wyam2&version=3.0.0-rc2&prerelease"
 #addin "nuget:https://api.nuget.org/v3/index.json?package=Octokit"
 
 using Octokit;
@@ -39,7 +39,7 @@ Task("GetSource")
     .IsDependentOn("CleanSource")
     .Does(() =>
     {
-        var githubToken = EnvironmentVariable("WYAM_GITHUB_TOKEN");
+        var githubToken = EnvironmentVariable("GH_ACCESS_TOKEN");
         GitHubClient github = new GitHubClient(new ProductHeaderValue("WyamDocs"))
         {
             Credentials = new Credentials(githubToken)
@@ -94,7 +94,7 @@ Task("Generate-Themes")
                 }.Select(x => new NuGetSettings
                 {
                     Prerelease = true,
-                    Source = new [] { "https://www.myget.org/F/wyam/api/v3/index.json" },
+                    Source = new [] { "https://api.nuget.org/v3/index.json" },
                     Package = x
                 }),
                 UpdatePackages = true
@@ -134,7 +134,7 @@ Task("Generate-Themes")
                         }.Select(x => new NuGetSettings
                         {
                             Prerelease = true,
-                            Source = new [] { "https://www.myget.org/F/wyam/api/v3/index.json" },
+                            Source = new [] { "https://api.nuget.org/v3/index.json" },
                             Package = x
                         }),
                         UpdatePackages = true
@@ -152,7 +152,7 @@ Task("Generate-Themes")
     
 Task("Preview")
     .IsDependentOn("GetSource")
-    //.IsDependentOn("Generate-Themes")
+    .IsDependentOn("Generate-Themes")
     .Does(() =>
     {
         Wyam(new WyamSettings
@@ -173,7 +173,7 @@ Task("Preview")
             }.Select(x => new NuGetSettings
             {
                 Prerelease = true,
-                Source = new [] { "https://www.myget.org/F/wyam/api/v3/index.json" },
+                Source = new [] { "https://api.nuget.org/v3/index.json" },
                 Package = x
             }),
             UpdatePackages = true,

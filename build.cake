@@ -1,13 +1,11 @@
 // The following environment variables need to be set for Publish target:
-// WYAM_GITHUB_TOKEN
+// GH_ACCESS_TOKEN
 
-#tool "nuget:https://api.nuget.org/v3/index.json?package=Wyam&version=2.2.9"
-#addin "nuget:https://api.nuget.org/v3/index.json?package=Cake.Wyam&version=2.2.12"
+#tool "nuget:https://api.nuget.org/v3/index.json?package=Wyam2&version=3.0.0-rc2&prerelease"
+#addin "nuget:https://api.nuget.org/v3/index.json?package=Cake.Wyam2&version=3.0.0-rc2&prerelease"
 #addin "nuget:https://api.nuget.org/v3/index.json?package=Octokit"
-//#addin "NetlifySharp"
 
 using Octokit;
-//using NetlifySharp;
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -32,20 +30,35 @@ Task("CleanSource")
 {
     if(DirectoryExists(sourceDir))
     {
+        Information($"Deleting {sourceDir}");
         DeleteDirectory(sourceDir, new DeleteDirectorySettings
         {
             Force = true,
             Recursive = true
         });
-    }    
+    }  
+
+    var subDirs = GetSubDirectories(releaseDir); 
+    if(subDirs != null && subDirs.Count > 0)
+    {
+        foreach (var subDir in subDirs)
+        {
+            Information($"Deleting {subDir}");
+            DeleteDirectory(subDir, new DeleteDirectorySettings
+            {
+                Force = true,
+                Recursive = true
+            });
+        }
+    }
 });
 
 Task("GetSource")
     .IsDependentOn("CleanSource")
     .Does(() =>
     {
-        var githubToken = EnvironmentVariable("WYAM_GITHUB_TOKEN");
-        GitHubClient github = new GitHubClient(new ProductHeaderValue("WyamDocs"))
+        var githubToken = EnvironmentVariable("GH_ACCESS_TOKEN");
+        GitHubClient github = new GitHubClient(new ProductHeaderValue("Wyam2-wyam-Docs"))
         {
             Credentials = new Credentials(githubToken)
         };
@@ -160,20 +173,7 @@ Task("Debug")
     });
 
 Task("Deploy")
-    .Does(() =>
-    {
-        /*
-        var netlifyToken = EnvironmentVariable("NETLIFY_TOKEN");
-        if(string.IsNullOrEmpty(netlifyToken))
-        {
-            throw new Exception("Could not get Netlify token environment variable");
-        }
-
-        Information("Deploying output to Netlify");
-        var client = new NetlifyClient(netlifyToken);
-        client.UpdateSite($"wyam.netlify.com", MakeAbsolute(Directory("./output")).FullPath).SendAsync().Wait();
-        */
-    });
+    .Does(() => { Information("Ran Deploy target"); });
 
 //////////////////////////////////////////////////////////////////////
 // TASK TARGETS

@@ -140,6 +140,20 @@ The output will be:
 ABC123XYZ
 ```
 
+A more real example would be displaying text as a note or warning panel. Assuming the theme uses [Boostrap](https://getbootstrap.com/docs/4.0/components/alerts/) then:
+- in the config.wyam file
+```csharp
+ShortcodeCollection.Add("Note", (string x) => $"<div class='alert alert-info' role='alert'>{x}</div>");
+ShortcodeCollection.Add("Warning", (string x) => $"<div class='alert alert-warning' role='alert'>{x}</div>");
+ShortcodeCollection.Add("Tip", (string x) => $"<div class='alert alert-success' role='alert'>{x}</div>");
+```
+- and in your .md file(s):
+```
+<?# Note ?>
+Thank you for reading Wyam2 documentation!
+<?#/ Note ?>
+```
+
 ## As A Class
 
 To write a shortcode as a class, implement `IShortcode` from `Wyam.Common`. Wyam will scan loaded assemblies prior to execution and make any shortcodes it finds available for use. The shortcode name will be the same as the implementing class name.

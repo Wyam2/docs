@@ -1,12 +1,12 @@
 Title: SolidState
 Description: Lots of white space on a dark theme with some edge.
 NuGet: Wyam.Blog.SolidState
-Source: https://github.com/Wyamio/Wyam/tree/develop/themes/Blog/SolidState
-# Author: Wyam
-# AuthorLink: http://wyam.io
+Source: https://github.com/Wyam2/wyam/tree/develop/themes/Blog/SolidState
+# Author: Wyam2
+# AuthorLink: http://wyam2.github.io
 # Link: http://www.github.com/asdf
 # Preview: http://some.other.preview/ OR false for no preview
-# Git: https://github.com/Wyamio/Wyam.git
+# Git: https://github.com/Wyam2/wyam.git
 ---
 This theme is a port of the [Solid State](https://html5up.net/solid-state) theme from [HTML5 Up](https://html5up.net).
 

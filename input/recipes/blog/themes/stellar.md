@@ -1,12 +1,12 @@
 Title: Stellar
 Description: A colorful theme with a big header.
 NuGet: Wyam.Blog.Stellar
-Source: https://github.com/Wyamio/Wyam/tree/develop/themes/Blog/Stellar
-# Author: Wyam
-# AuthorLink: http://wyam.io
+Source: https://github.com/Wyam2/wyam/tree/develop/themes/Blog/Stellar
+# Author: Wyam2
+# AuthorLink: http://wyam2.github.io
 # Link: http://www.github.com/asdf
 # Preview: http://some.other.preview/ OR false for no preview
-# Git: https://github.com/Wyamio/Wyam.git
+# Git: https://github.com/Wyam2/wyam.git
 ---
 This theme is a port of the [Stellar](https://html5up.net/stellar) theme from [HTML5 Up](https://html5up.net).
 

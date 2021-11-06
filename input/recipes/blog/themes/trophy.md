@@ -1,12 +1,12 @@
 Title: Trophy
 Description: A rugged theme that features images front and center.
 NuGet: Wyam.Blog.Trophy
-Source: https://github.com/Wyamio/Wyam/tree/develop/themes/Blog/Trophy
-# Author: Wyam
-# AuthorLink: http://wyam.io
+Source: https://github.com/Wyam2/wyam/tree/develop/themes/Blog/Trophy
+# Author: Wyam2
+# AuthorLink: http://wyam2.github.io
 # Link: http://www.github.com/asdf
 # Preview: http://some.other.preview/ OR false for no preview
-# Git: https://github.com/Wyamio/Wyam.git
+# Git: https://github.com/Wyam2/wyam.git
 ---
 This theme is a port of the Jekyll [Trophy](https://github.com/thomasvaeth/trophy-jekyll) theme.
 

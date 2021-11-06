@@ -152,6 +152,27 @@ Pipelines.Add(
     WriteFiles(".html")
 );
 ```
+or
+```
+ //Disable API doc generation while in development
+if(inDev)
+{
+    Pipelines.Remove(Docs.RenderApi);
+    Pipelines.Remove(Docs.ApiIndex);
+    Pipelines.Remove(Docs.ApiSearchIndex);
+}
+```
+or
+```
+//Insert a new pipeline called "Test" that dumps the pipeline docs using a custom json serialization to the log file
+Pipelines.InsertAfter("Reference", "Test",
+    Documents(Docs.Api),
+    ForEach(
+        Trace(DocToJson)
+    )
+ );
+```
+
 
 However, don't let the simplicity fool you. Wyam configuration files are C# scripts and as such can make use of the full C# language and the entire .NET ecosystem (including the built-in support for NuGet and other assemblies as explained above). One of the core modules even lets you write a delegate right in your configuration file for extreme flexibility.
 

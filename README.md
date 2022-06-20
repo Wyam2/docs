@@ -11,5 +11,5 @@ PS C:\OSS\wyam2\docs> .\build.ps1
 ```
 or if you need more details and save all build output to a file
 ```
-PS C:\OSS\wyam2\docs> .\build.ps1 -Verbosity diagnostic | Out-File 'build.log'
+PS C:\OSS\wyam2\docs> .\build.ps1 -Verbosity diagnostic *>&1 | Out-File 'build.log'
 ```

@@ -79,13 +79,13 @@ Wyam follows the same conventions as NuGet with regards to [specifying version r
 [1.0,2.0] = 1.0 ≤ x ≤ 2.0
 ```
 
-Note that many modules require their package to be installed before they can be used. For example, to make use of the [Markdown](/modules/markdown) module, you must install the `Wyam.Markdown` package. To do this, you would add the following to your configuration file:
+Note that many modules require their package to be installed before they can be used. For example, to make use of the [Markdown](/modules/markdown) module, you must install the `Wyam2.Markdown` package. To do this, you would add the following to your configuration file:
 
 ```
 #n Wyam.Markdown
 ``` 
 
-You can also specify the special `Wyam.All` package which will download all of the official Wyam module packages at once:
+You can also specify the special `Wyam2.All` package which will download all of the official Wyam module packages at once:
 
 ```
 #n Wyam.All

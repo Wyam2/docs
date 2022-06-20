@@ -1,8 +1,8 @@
 // The following environment variables need to be set for Publish target:
 // GH_ACCESS_TOKEN
 
-#tool "nuget:https://api.nuget.org/v3/index.json?package=Wyam2&version=3.0.0-rc2&prerelease"
-#addin "nuget:https://api.nuget.org/v3/index.json?package=Cake.Wyam2&version=3.0.0-rc2&prerelease"
+#tool "nuget:https://api.nuget.org/v3/index.json?package=Wyam2&version=3.0.0&prerelease"
+#addin "nuget:https://api.nuget.org/v3/index.json?package=Cake.Wyam2&version=3.0.0&prerelease"
 #addin "nuget:https://api.nuget.org/v3/index.json?package=Octokit"
 
 using Octokit;
@@ -57,7 +57,7 @@ Task("GetSource")
     .IsDependentOn("CleanSource")
     .Does(() =>
     {
-        var githubToken = EnvironmentVariable("GH_ACCESS_TOKEN");
+        var githubToken = EnvironmentVariable("GH_ACCESS_TOKEN") ?? "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";
         GitHubClient github = new GitHubClient(new ProductHeaderValue("Wyam2-wyam-Docs"))
         {
             Credentials = new Credentials(githubToken)

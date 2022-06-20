@@ -57,7 +57,7 @@ Task("GetSource")
     .IsDependentOn("CleanSource")
     .Does(() =>
     {
-        var githubToken = EnvironmentVariable("GH_ACCESS_TOKEN") ?? "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";
+        var githubToken = EnvironmentVariable("GH_ACCESS_TOKEN");
         GitHubClient github = new GitHubClient(new ProductHeaderValue("Wyam2-wyam-Docs"))
         {
             Credentials = new Credentials(githubToken)
